@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Valentine Space ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap');
+
+        :root {
+            --hot-pink: #ff4d6d;
+            --soft-pink: #ffb3c1;
+            --white: #ffffff;
+            --romantic-red: #c9184a;
+            --bg-valentine: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: #ffe5ec;
+        }
+
+        /* --- BACKGROUND GLOBAL --- */
+        #bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #ffb3c1 0%, #ff758f 100%);
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        #bg-container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/flowers.png');
+            opacity: 0.2;
+        }
+
+        .particle {
+            position: absolute;
+            top: -50px;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            width: 100%; height: 100%;
+            background: var(--hot-pink);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 500; transition: 1s; cursor: pointer;
+        }
+
+        .heart-lock-svg { width: 120px; fill: white; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- LOCK SCREEN --- */
+        #lock-screen {
+            position: fixed;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 400; transition: 1s;
+            background: rgba(201, 24, 74, 0.85); backdrop-filter: blur(10px);
+        }
+
+        .pass-display { font-size: 2.5rem; color: white; letter-spacing: 5px; margin-bottom: 30px; font-weight: 600; font-family: monospace; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 80px); gap: 15px; }
+        .num-btn { width: 80px; height: 80px; border-radius: 50%; border: 2px solid white; background: rgba(255,255,255,0.1); color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .num-btn:hover { background: white; color: var(--hot-pink); }
+
+        /* --- MAIN MENU --- */
+        #main-menu { height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 50; }
+        .romantic-title { 
+            font-family: 'Great Vibes', cursive; 
+            color: white; 
+            margin-bottom: 30px; 
+            font-size: 4rem; 
+            text-shadow: 2px 2px rgba(0,0,0,0.2); 
+            text-align: center;
+            font-style: normal; /* Paksa tidak miring */
+        }
+
+        .menu-wrapper { display: flex; justify-content: center; gap: 25px; width: 90%; max-width: 1100px; }
+        .menu-card {
+            flex: 1; height: 320px; background: rgba(255, 255, 255, 0.9); border-radius: 30px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: 0.4s; border: 4px solid var(--soft-pink);
+            cursor: pointer; padding: 20px; text-align: center;
+        }
+        .menu-card:hover { transform: translateY(-15px); border-color: var(--hot-pink); background: white; }
+        .menu-card i { font-size: 55px; margin-bottom: 15px; }
+
+        /* --- OVERLAYS --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 600; display: none; flex-direction: column; justify-content: center; 
+            align-items: center; backdrop-filter: blur(8px); color: white;
+            background: linear-gradient(rgba(255, 175, 189, 0.9), rgba(255, 195, 160, 0.9));
+        }
+
+        /* Memories Frames & Decorations */
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 90%; max-width: 550px; }
+        .frame { 
+            background: white; padding: 12px 12px 50px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            transform: rotate(var(--r)) scale(0); 
+            opacity: 0; transition: 0.7s forwards; 
+            position: relative; 
+            border: 2px solid var(--soft-pink);
+        }
+        .frame.animate { transform: rotate(var(--r)) scale(1); opacity: 1; }
+        .frame img { width: 100%; height: 180px; object-fit: cover; }
+        
+        /* Frame Ornaments */
+        .frame::before { content: "🌸"; position: absolute; top: -10px; left: -10px; font-size: 25px; }
+        .frame::after { content: "💖"; position: absolute; bottom: 10px; right: 10px; font-size: 20px; }
+        .ornament-flower { position: absolute; top: -15px; right: -15px; font-size: 25px; }
+
+        /* Music Vinyl */
+        .music-player-container {
+    background: #e63946; /* Merah seperti gambar */
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.video-frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#youtube-player {
+    width: 100%;
+    height: 100%;
+}
+
+.player-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.play-main-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: #e63946;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.ctrl-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.control-buttons {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.progress-slider {
+    width: 100%;
+    accent-color: white;
+}
+
+        /* Valentine Letter Card */
+        .letter-container {
+            background: #fff0f3; color: #333; width: 80%; max-width: 450px;
+            padding: 40px; border-radius: 25px; border: 4px double var(--hot-pink); 
+            transform: translateY(30px); opacity: 0; transition: 0.6s;
+            position: relative; box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        .letter-container.show { transform: translateY(0); opacity: 1; }
+        .letter-content { 
+            font-family: 'Great Vibes', cursive; font-size: 2.2rem; 
+            text-align: center; line-height: 1.4; font-style: normal; /* Tegak */
+        }
+        .letter-container::before { content: "🌹"; position: absolute; top: 10px; left: 10px; font-size: 20px; }
+        .letter-container::after { content: "🌹"; position: absolute; bottom: 10px; right: 10px; font-size: 20px; }
+
+        .close-btn { 
+            margin-top: 30px; padding: 12px 40px; 
+            background: var(--romantic-red); color: white; 
+            border: none; border-radius: 50px; cursor: pointer; font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .hidden { display: none !important; }
+        .show-flex { display: flex !important; }
+        #youtube-player { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body onload="startFalling()">
+
+    <div id="bg-container"></div>
+
+    <div id="splash-screen" onclick="hideSplash()">
+        <svg class="heart-lock-svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z M12 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z M11 12v3h2v-3h-2z"/></svg>
+        <p style="color: white; margin-top: 20px; letter-spacing: 2px; font-weight: 600;">TAP TO UNLOCK LOVE</p>
+    </div>
+
+    <div id="lock-screen" class="hidden">
+        <h2 style="color: white; margin-bottom: 10px;">Enter Special Date</h2>
+        <div class="pass-display" id="display">__-__-____</div>
+        <div class="numpad">
+            <button class="num-btn" onclick="addNum('1')">1</button><button class="num-btn" onclick="addNum('2')">2</button><button class="num-btn" onclick="addNum('3')">3</button>
+            <button class="num-btn" onclick="addNum('4')">4</button><button class="num-btn" onclick="addNum('5')">5</button><button class="num-btn" onclick="addNum('6')">6</button>
+            <button class="num-btn" onclick="addNum('7')">7</button><button class="num-btn" onclick="addNum('8')">8</button><button class="num-btn" onclick="addNum('9')">9</button>
+            <button class="num-btn" onclick="clearAll()">C</button><button class="num-btn" onclick="addNum('0')">0</button><button class="num-btn" onclick="check()">OK</button>
+        </div>
+    </div>
+
+    <div id="main-menu">
+        <h1 class="romantic-title">Happy Valentine's Day ❤️</h1>
+        <div class="menu-wrapper">
+            <div class="menu-card" onclick="openOverlay('memories-overlay')"><i>📸</i><h3>Memories</h3></div>
+            <div class="menu-card" onclick="openMusic()"><i>🎵</i><h3>Music</h3></div>
+            <div class="menu-card" onclick="openLetter()"><i>💌</i><h3>Letter</h3></div>
+        </div>
+    </div>
+
+    <div id="memories-overlay" class="overlay">
+        <h2 class="romantic-title" style="font-size: 2.5rem;">Our Memories 🌸</h2>
+        <div class="gallery-grid">
+    <div class="frame" style="--r:-3deg">
+        <span class="ornament-flower">🌺</span>
+        <img src="https://lh3.googleusercontent.com/u/0/d/13mJU3ItMg03kIAjxs7aRimayv3j8YqBe">
+    </div>
+    <div class="frame" style="--r:2deg">
+        <span class="ornament-flower">🌼</span>
+        <img src="https://lh3.googleusercontent.com/u/0/d/1kUKPXk4L6MRbUGQlflg5L8u571dJ-Rb-">
+    </div>
+    <div class="frame" style="--r:-3deg">
+    <span class="ornament-flower">🌺</span>
+    <img src="https://lh3.googleusercontent.com/u/0/d/1gE8FvI5hheYh2iduMdCWoAmFo9DN6Fto">
+</div>
+    <div class="frame" style="--r:4deg">
+        <span class="ornament-flower">🌹</span>
+        <img src="https://lh3.googleusercontent.com/u/0/d/196-EoH2bv3EYMbrCh_TMlCeegCwMy6pU">
+    </div>
+</div>
+        <button class="close-btn" onclick="closeOverlay('memories-overlay')">Back to Menu</button>
+    </div>
+
+    <div id="music-overlay" class="overlay">
+        <h2 class="romantic-title" style="font-size: 2rem;">Our Music ❤️🌹</h2>
+        
+        <div class="music-player-container">
+            <div class="video-frame">
+                <video id="local-video" width="100%" height="100%" loop>
+                    <source src="Our Song.mp4" type="video/mp4">
+                    Browser kamu tidak mendukung tag video.
+                </video>
+            </div>
+
+            <div class="player-controls">
+                <div class="control-buttons">
+                    <button class="ctrl-btn" onclick="skipVideo(-10)">⏮</button>
+                    <button class="play-main-btn" id="play-pause-target" onclick="togglePlayPause()">▶</button>
+                    <button class="ctrl-btn" onclick="skipVideo(10)">⏭</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="close-btn" onclick="closeMusic()">Back to Menu</button>
+    </div>
+
+    <div id="letter-overlay" class="overlay">
+        <div class="letter-container" id="letter-box">
+            <div class="letter-content">
+                Happy Valentine Sayaangg, aku buat ini biar kita bisa ingat dan ngerayain valentine sayangg walaupun berjauhan, maaf sayyangg bunga kemarin engga ada suratnya, ini jadi pengganti surat kemarin dan sekalian rayain valentine sayaangg, semoga kamu sukaa yaa sayanngg❤️❤️ <br><br>
+                I Lloovvee yyoouu sssoo ssoo mmuuchh ccallonn isstrikkuu, ttuuaann puttriikuu, diivvaa sayaannggkuu ❤️❤️❤️❤️❤️❤️🌹🌹🌹🌹
+            </div>
+        </div>
+        <button class="close-btn" onclick="closeOverlay('letter-overlay')">Close Letter</button>
+    </div>
+
+    <div id="mute-btn" onclick="toggleMute()">🔊</div>
+
+<script>
+    // --- KONFIGURASI ---
+    const annivDate = "10082025"; 
+    const video = document.getElementById('local-video');
+    let isMuted = false;
+
+    // 1. Fungsi Partikel Hati & Bunga
+    function startFalling() {
+        const container = document.getElementById('bg-container');
+        const items = ['❤️','✨','🌸','🌹','💕','🌷'];
+        setInterval(() => {
+            const p = document.createElement('div'); p.classList.add('particle');
+            p.innerHTML = items[Math.floor(Math.random()*items.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = Math.random() * 20 + 10 + 'px';
+            p.style.animationDuration = (Math.random()*3+3)+'s';
+            container.appendChild(p); setTimeout(() => p.remove(), 5000);
+        }, 250);
+    }
+
+    // 2. Fungsi Unlock & Navigation
+    function hideSplash() { 
+        document.getElementById('splash-screen').style.opacity = '0';
+        setTimeout(() => { 
+            document.getElementById('splash-screen').classList.add('hidden'); 
+            document.getElementById('lock-screen').classList.remove('hidden'); 
+        }, 1000);
+    }
+
+    let input = "";
+    function addNum(n) { if(input.length < 8) { input += n; updateDisp(); } }
+    function clearAll() { input = ""; updateDisp(); }
+
+    function updateDisp() { 
+        let d = input.split(""); let displayStr = "__-__-____".split(""); 
+        let charIndex = 0;
+        for(let i = 0; i < displayStr.length; i++) {
+            if(displayStr[i] === "_" && d[charIndex]) { displayStr[i] = d[charIndex]; charIndex++; }
+        }
+        document.getElementById('display').innerText = displayStr.join("");
+    }
+
+    function check() { 
+        if(input === annivDate) { 
+            document.getElementById('lock-screen').style.display='none'; 
+            document.getElementById('main-menu').classList.add('show-flex'); 
+            document.getElementById('mute-btn').style.display = 'flex'; 
+        } else { 
+            alert("Tanggal salah, coba lagi sayang!"); clearAll(); 
+        }
+    }
+
+    // 3. Kontrol Overlay
+    function openOverlay(id) {
+        document.getElementById(id).style.display = 'flex';
+        if(id === 'memories-overlay') {
+            setTimeout(() => document.querySelectorAll('.frame').forEach((f, i) => setTimeout(() => f.classList.add('animate'), i*150)), 100);
+        }
+    }
+    
+    function closeOverlay(id) {
+        document.getElementById(id).style.display = 'none';
+        if(id === 'memories-overlay') document.querySelectorAll('.frame').forEach(f => f.classList.remove('animate'));
+        if(id === 'letter-overlay') document.getElementById('letter-box').classList.remove('show');
+    }
+
+    function openLetter() { 
+        openOverlay('letter-overlay'); 
+        setTimeout(() => document.getElementById('letter-box').classList.add('show'), 100); 
+    }
+
+    // 4. LOGIKA MUSIC (VIDEO LOKAL)
+    function openMusic() { 
+    openOverlay('music-overlay'); 
+    if (video) {
+        video.volume = 0.4; // SET KE 40% (Atur angka ini sesukamu)
+        video.muted = isMuted;
+        video.play().catch(e => console.log("Autoplay dicegah"));
+        document.getElementById('play-pause-target').innerText = "⏸";
+    }
+}
+
+    function closeMusic() { 
+        closeOverlay('music-overlay'); 
+        if (video) video.pause();
+    }
+
+    function togglePlayPause() {
+        const btn = document.getElementById('play-pause-target');
+        if (video.paused) {
+            video.play();
+            btn.innerText = "⏸";
+        } else {
+            video.pause();
+            btn.innerText = "▶";
+        }
+    }
+
+    function skipVideo(sec) {
+        if (video) video.currentTime += sec;
+    }
+
+    function toggleMute() {
+        if (video) {
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "🔇" : "🔊";
+        }
+    }
+</script>
+</script>
+</body>
+</html>
